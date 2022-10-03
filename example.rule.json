@@ -1,0 +1,29 @@
+[
+  {
+        "name": "disable_druid_web_interface",
+        "description": "对所有.kevin1986.com结尾的域名请求匹配/druid/路径，并只允许非互联网访问，否则返回特定内容",
+        "description之反正随便写": "规则组里所有条件都是并关系， 如果要那啥就取个反",
+        "description之这个key无所谓": "规则里只看 name, rule, action, enabled几个key的内容，其他可以随便来",
+        "rule":[
+            {"mz":"http_host","method":"endswith","pattern":".kevin1986.com"},
+            {"mz":"request_uri","method":"contains","pattern":"/druid/"},
+            {"mz":"remote_addr","method":"ipcontains","pattern":"192.168.0.0/16","rev": true},
+            {"mz":"remote_addr","method":"ipcontains","pattern":"172.16.0.0.0/12","rev": true},
+            {"mz":"remote_addr","method":"ipcontains","pattern":"10.0.0.0/8","rev": true},
+            {"mz":"remote_addr","method":"ipcontains","pattern":"100.0.0.0/8","rev": true},
+            {"mz":"remote_addr","method":"ipcontains","pattern":"127.0.0.0/8","rev": true}
+        ],
+        "action": ["hijack", { "code": 200, "body": "Wolverine Warning: Go fuck your self." }],
+        "enabled": true
+    },
+    {
+         "name":"CVE-2022-22965",
+         "description": "Anti Spring Core RCE: CVE-2022-22965",
+         "rule":[
+            {"mz":"QUERY_STRING","method":"regex","pattern":"class\\s*\\.\\s*module"}
+         ],
+         "action":["deny", {"code": 400}],
+         "enabled":true
+    },
+  
+]
