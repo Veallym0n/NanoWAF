@@ -14,7 +14,7 @@ server {
         # pcall will not through 500 if lua got err........
         rewrite_by_lua_block {
             stat,err = pcall(function()
-                waf = require("conf/solowaf")
+                waf = require("nanowaf")
                 waf.check_request()
             end)
         }
