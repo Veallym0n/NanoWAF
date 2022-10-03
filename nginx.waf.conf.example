@@ -1,0 +1,28 @@
+http {
+  ...
+    resolver 8.8.8.8;
+  
+    init_worker_by_lua_block {
+        waf = require("nanowaf")
+        ngx.timer.at(0, waf.check_config, 'http://config.etcd.waf/rule_example.json', 10, 500)
+    }
+
+
+server {
+        listen  80  reuseport;
+        
+        # pcall will not through 500 if lua got err........
+        rewrite_by_lua_block {
+            stat,err = pcall(function()
+                waf = require("conf/solowaf")
+                waf.check_request()
+            end)
+        }
+        
+        location / {
+          ....
+        }
+        
+        ...
+      }
+ }
