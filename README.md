@@ -58,12 +58,12 @@ NanoWAF的启用，依赖于核心nanowaf.lua, 对熟悉lua的朋友来说，代
   
   @waf.regist({"name":"anti_thief","action":"mirror","rule":[{"mz":"http_XXX","method":"equals","pattern":"YYY"}]}) #这里是动态给服务端注册一个规则
   @waf.on_mirror_request
-  def process_request(request, response):
-      uid = LoginModelMock.mockLogin(request)   #模拟它这次登入，获得用户的id
+  async def process_request(request, response):
+      uid = await LoginModelMock.mockLogin(request)   #模拟它这次登入，获得用户的id
       if uid:
-          MessageModelMock.sendMessage(uid, "检测到您的账户可能填写在钓鱼网站上，个人信息已遭到失窃。本次获取您信息的攻击已被拦截，请注意个人信息防范。") #给用户pushapp消息
-          LoginModelMock.kickUserSession(uid)   #剔除掉现有的Session
-          SecurityModelMock.addBlackListIP(request.remote_addr, "phishing", "phishing from XXX", 86400*5)。  # 告诉其他风控系统这个IP有危险
+          await MessageModelMock.sendMessage(uid, "检测到您的账户可能填写在钓鱼网站上，个人信息已遭到失窃。本次获取您信息的攻击已被拦截，请注意个人信息防范。") #给用户pushapp消息
+          await LoginModelMock.kickUserSession(uid)   #剔除掉现有的Session
+          await SecurityModelMock.addBlackListIP(request.remote_addr, "phishing", "phishing from XXX", 86400*5)。  # 告诉其他风控系统这个IP有危险
       response.add_header('x-checkstatus': json.dumps(["deny",{"code":401}]))    # 告诉waf，返回401，请求就不要给原站了
   ```
   
